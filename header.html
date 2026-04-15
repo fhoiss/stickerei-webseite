@@ -1,0 +1,187 @@
+<!--
+  header.html – Hoiß Stickerei & Textildruck
+  Einbinden via:
+    fetch('/header.html').then(r => r.text()).then(html => {
+      document.getElementById('site-header-placeholder').innerHTML = html;
+      window.initHeader();
+    });
+  Alle Styles → hoiss-stickerei.css (Sektionen 21–23)
+-->
+
+<!-- ░░ TOPBAR ░░ -->
+<div class="hs-topbar">
+  <div class="hs-topbar__inner">
+    <a class="hs-topbar__item" href="tel:+4980317983988">+49 (0)8031 798 39 88</a>
+    <a class="hs-topbar__item" href="mailto:info@stickerei-hoiss.de">info@stickerei-hoiss.de</a>
+    <span class="hs-topbar__item hs-topbar__item--hours">Mo–Fr 08:00 – 17:00 Uhr</span>
+  </div>
+</div>
+
+<!-- ░░ HEADER ░░ -->
+<header class="hs-header" id="hs-header">
+  <div class="hs-header__inner">
+
+    <!-- Logo -->
+    <a class="hs-logo" href="/" aria-label="Hoiß Stickerei – Startseite">
+      <img
+        class="hs-logo__img"
+        src="https://hoiss-stickerei.de/wp-content/uploads/2019/11/Stickerei_Hoiss_NEU.png"
+        alt="Hoiß Stickerei & Textildruck"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+      >
+      <span class="hs-logo__text">
+        <span class="hs-logo__name">Hoiß</span>
+        <span class="hs-logo__sub">Stickerei &amp; Textildruck</span>
+      </span>
+    </a>
+
+    <!-- Desktop-Navigation -->
+    <nav aria-label="Hauptnavigation">
+      <ul class="hs-nav" id="hs-nav">
+
+        <!-- 1. Stickerei -->
+        <li class="hs-nav__item">
+          <a class="hs-nav__link" href="/stickerei/">Stickerei</a>
+        </li>
+
+        <!-- 2. Textildruck -->
+        <li class="hs-nav__item" id="nav-textildruck">
+          <button class="hs-nav__link" aria-haspopup="true" aria-expanded="false" aria-controls="dd-textildruck">
+            Textildruck <span class="hs-nav__chevron">▼</span>
+          </button>
+          <div class="hs-dropdown" id="dd-textildruck" role="menu">
+
+            <div class="hs-dropdown__section">
+              <div class="hs-dropdown__label">Empfohlene Methode</div>
+              <a class="hs-dropdown__link" href="/dtf-transferdruck/" role="menuitem">
+                <span class="hs-dropdown__title">
+                  DTF-Transferdruck
+                  <span class="hs-badge hs-badge--top">Top</span>
+                </span>
+                <span class="hs-dropdown__desc">Fotorealistisch · alle Farben · ab 1 Stück</span>
+              </a>
+            </div>
+
+            <div class="hs-dropdown__section">
+              <div class="hs-dropdown__label">Weitere Verfahren</div>
+              <a class="hs-dropdown__link" href="/flexdruck/" role="menuitem">
+                <span class="hs-dropdown__title">
+                  Flexdruck
+                  <span class="hs-badge hs-badge--muted">Folie</span>
+                </span>
+                <span class="hs-dropdown__desc">Glatte Oberfläche · einfarbige Motive</span>
+              </a>
+              <a class="hs-dropdown__link" href="/flockdruck/" role="menuitem">
+                <span class="hs-dropdown__title">
+                  Flockdruck
+                  <span class="hs-badge hs-badge--muted">Samt</span>
+                </span>
+                <span class="hs-dropdown__desc">Samtige Haptik · Sport &amp; Vereinsbekleidung</span>
+              </a>
+            </div>
+
+          </div>
+        </li>
+
+        <!-- 3. Lösungen -->
+        <li class="hs-nav__item" id="nav-loesungen">
+          <button class="hs-nav__link" aria-haspopup="true" aria-expanded="false" aria-controls="dd-loesungen">
+            Lösungen <span class="hs-nav__chevron">▼</span>
+          </button>
+          <div class="hs-dropdown" id="dd-loesungen" role="menu">
+
+            <div class="hs-dropdown__section">
+              <a class="hs-dropdown__link" href="/loesungen/firmen-handwerk/" role="menuitem">
+                <span class="hs-dropdown__title">Firmen &amp; Handwerk</span>
+                <span class="hs-dropdown__desc">Workwear, Corporate Identity, Berufskleidung</span>
+              </a>
+              <a class="hs-dropdown__link" href="/loesungen/vereine-teams/" role="menuitem">
+                <span class="hs-dropdown__title">Vereine &amp; Teams</span>
+                <span class="hs-dropdown__desc">Sport, Freizeit, Vereinsbekleidung</span>
+              </a>
+              <a class="hs-dropdown__link" href="/loesungen/gastronomie-events/" role="menuitem">
+                <span class="hs-dropdown__title">Gastronomie &amp; Events</span>
+                <span class="hs-dropdown__desc">Schürzen, Promotion, Eventkleidung</span>
+              </a>
+            </div>
+
+          </div>
+        </li>
+
+        <!-- 4. Katalog -->
+        <li class="hs-nav__item">
+          <a class="hs-nav__link" href="/katalog/">Katalog</a>
+        </li>
+
+        <!-- 5. Werbetechnik (extern) -->
+        <li class="hs-nav__item">
+          <a class="hs-nav__link" href="https://www.werbetechnik-hoiss.de" target="_blank" rel="noopener noreferrer">
+            Werbetechnik <span class="hs-nav__ext">↗</span>
+          </a>
+        </li>
+
+      </ul>
+    </nav>
+
+    <!-- CTA + Hamburger -->
+    <div style="display:flex;align-items:center;gap:0.375rem;flex-shrink:0;">
+      <a class="hs-cta" href="/anfrage/">Jetzt anfragen</a>
+      <button
+        class="hs-hamburger"
+        id="hs-hamburger"
+        aria-label="Menü öffnen"
+        aria-expanded="false"
+        aria-controls="hs-mobile-nav"
+      >
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Mobile Nav -->
+  <nav class="hs-mobile-nav" id="hs-mobile-nav" aria-label="Mobile Navigation">
+
+    <a class="hs-mob-link" href="/stickerei/">
+      Stickerei
+      <span class="hs-mob-link__arrow">›</span>
+    </a>
+
+    <button class="hs-mob-link" id="mob-druck-btn" aria-expanded="false">
+      Textildruck
+      <span class="hs-mob-link__arrow" id="mob-druck-arr">›</span>
+    </button>
+    <div class="hs-mob-sub" id="mob-druck-sub">
+      <a href="/dtf-transferdruck/">DTF-Transferdruck <span class="hs-badge hs-badge--top" style="margin-left:4px;">Top</span></a>
+      <a href="/flexdruck/">Flexdruck</a>
+      <a href="/flockdruck/">Flockdruck</a>
+    </div>
+
+    <button class="hs-mob-link" id="mob-loes-btn" aria-expanded="false">
+      Lösungen
+      <span class="hs-mob-link__arrow" id="mob-loes-arr">›</span>
+    </button>
+    <div class="hs-mob-sub" id="mob-loes-sub">
+      <a href="/loesungen/firmen-handwerk/">Firmen &amp; Handwerk</a>
+      <a href="/loesungen/vereine-teams/">Vereine &amp; Teams</a>
+      <a href="/loesungen/gastronomie-events/">Gastronomie &amp; Events</a>
+    </div>
+
+    <a class="hs-mob-link" href="/katalog/">
+      Katalog
+      <span class="hs-mob-link__arrow">›</span>
+    </a>
+
+    <a class="hs-mob-link" href="https://www.werbetechnik-hoiss.de" target="_blank" rel="noopener noreferrer">
+      Werbetechnik ↗
+      <span class="hs-mob-link__arrow">›</span>
+    </a>
+
+    <div class="hs-mob-cta">
+      <a href="/anfrage/">Jetzt anfragen</a>
+    </div>
+
+  </nav>
+</header>
+
+<!-- Scripts → main.js -->

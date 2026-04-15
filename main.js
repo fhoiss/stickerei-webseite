@@ -1,181 +1,219 @@
-// ========================================
-// COMPONENT LOADER
-// ========================================
-document.addEventListener('DOMContentLoaded', function() {
-    loadHeader();
-    loadFooter();
-    initializeNavigation();
-    initializeCookieBanner();
-});
+/**
+ * main.js – Hoiß Stickerei & Textildruck
+ * Einbinden via: <script src="/main.js" defer></script>
+ *
+ * Enthält:
+ *   1. initHeader()   – Dropdowns, Hamburger, Mobile-Submenüs, aktiver Menüpunkt
+ *   2. initFooter()   – Jahreszahl, Impressum-Overlay
+ *   3. init()         – Einstiegspunkt, wartet auf DOM-Ready und auf
+ *                       dynamisch nachgeladene Fragmente (header/footer)
+ */
 
-function loadHeader() {
-    const headerPlaceholder = document.getElementById('header-placeholder');
-    if (!headerPlaceholder) return;
-    
-    fetch('header.html')
-        .then(response => response.text())
-        .then(html => {
-            headerPlaceholder.innerHTML = html;
-            initializeNavigation();
-        })
-        .catch(error => console.error('❌ Header konnte nicht geladen werden:', error));
-}
+(function () {
+  'use strict';
 
-function loadFooter() {
-    const footerPlaceholder = document.getElementById('footer-placeholder');
-    if (!footerPlaceholder) return;
-    
-    fetch('footer.html')
-        .then(response => response.text())
-        .then(html => {
-            footerPlaceholder.innerHTML = html;
-            initializeCookieBanner();
-        })
-        .catch(error => console.error('❌ Footer konnte nicht geladen werden:', error));
-}
+  /* ============================================================
+     1. HEADER
+     ============================================================ */
 
-// ========================================
-// MOBILE NAVIGATION TOGGLE
-// ========================================
-function initializeNavigation() {
-    const navToggle = document.querySelector('.nav-toggle');
-    const navMenu = document.querySelector('.nav-menu');
-    
-    if (!navToggle || !navMenu) return;
-    
-    navToggle.addEventListener('click', function() {
-        const isExpanded = this.getAttribute('aria-expanded') === 'true';
-        this.setAttribute('aria-expanded', !isExpanded);
-        navMenu.classList.toggle('active');
+  /**
+   * Initialisiert alle Header-Interaktionen.
+   * Wird automatisch aufgerufen sobald das Header-Fragment im DOM ist.
+   * Kann auch manuell nach dynamischem Nachladen aufgerufen werden:
+   *   fetch('header.html').then(...).then(() => window.initHeader());
+   */
+  function initHeader() {
+
+    /* ── Desktop-Dropdowns ── */
+    function makeDropdown(itemId) {
+      var item = document.getElementById(itemId);
+      if (!item) return;
+      var btn = item.querySelector('.hs-nav__link');
+
+      function open() {
+        item.classList.add('hs-nav__item--open');
+        if (btn) btn.setAttribute('aria-expanded', 'true');
+      }
+      function close() {
+        item.classList.remove('hs-nav__item--open');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      }
+
+      item.addEventListener('mouseenter', open);
+      item.addEventListener('mouseleave', close);
+
+      if (btn) {
+        btn.addEventListener('click', function () {
+          item.classList.contains('hs-nav__item--open') ? close() : open();
+        });
+      }
+
+      document.addEventListener('click', function (e) {
+        if (!item.contains(e.target)) close();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') close();
+      });
+    }
+
+    makeDropdown('nav-textildruck');
+    makeDropdown('nav-loesungen');
+
+    /* ── Hamburger (Mobile Nav öffnen/schließen) ── */
+    var hbg = document.getElementById('hs-hamburger');
+    var mob = document.getElementById('hs-mobile-nav');
+
+    if (hbg && mob) {
+      hbg.addEventListener('click', function () {
+        var open = mob.classList.toggle('is-open');
+        hbg.classList.toggle('is-open', open);
+        hbg.setAttribute('aria-expanded', String(open));
+        hbg.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+      });
+    }
+
+    /* ── Mobile Submenüs ── */
+    function makeMobSub(btnId, subId, arrId) {
+      var btn = document.getElementById(btnId);
+      var sub = document.getElementById(subId);
+      var arr = document.getElementById(arrId);
+      if (!btn || !sub) return;
+
+      btn.addEventListener('click', function () {
+        var open = sub.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', String(open));
+        if (arr) arr.classList.toggle('is-open', open);
+      });
+    }
+
+    makeMobSub('mob-druck-btn', 'mob-druck-sub', 'mob-druck-arr');
+    makeMobSub('mob-loes-btn',  'mob-loes-sub',  'mob-loes-arr');
+
+    /* ── Aktiven Menüpunkt markieren ── */
+    var path = window.location.pathname;
+    document.querySelectorAll('.hs-nav__link[href]').forEach(function (link) {
+      if (link.getAttribute('href') === path) {
+        link.classList.add('hs-nav__link--active');
+      }
     });
-    
-    // Dropdown Menus
-    const dropdowns = document.querySelectorAll('.nav-dropdown-toggle');
-    dropdowns.forEach(dropdown => {
-        dropdown.addEventListener('click', function(e) {
-            e.preventDefault();
-            const isExpanded = this.getAttribute('aria-expanded') === 'true';
-            this.setAttribute('aria-expanded', !isExpanded);
-            const dropdownMenu = this.closest('.nav-dropdown')?.querySelector('.nav-dropdown-menu');
-            if (dropdownMenu) {
-                dropdownMenu.classList.toggle('active');
-            }
-        });
+  }
+
+
+  /* ============================================================
+     2. FOOTER
+     ============================================================ */
+
+  /**
+   * Initialisiert alle Footer-Interaktionen.
+   * Wird automatisch aufgerufen sobald das Footer-Fragment im DOM ist.
+   * Kann auch manuell nach dynamischem Nachladen aufgerufen werden:
+   *   fetch('footer.html').then(...).then(() => window.initFooter());
+   */
+  function initFooter() {
+
+    /* ── Jahreszahl automatisch aktuell halten ── */
+    var yr = document.getElementById('hs-year');
+    if (yr) yr.textContent = new Date().getFullYear();
+
+    /* ── Impressum-Overlay ── */
+    var overlay  = document.getElementById('hs-impr-overlay');
+    var closeBtn = document.getElementById('hs-impr-close');
+
+    function openImpr(e) {
+      e.preventDefault();
+      if (overlay) overlay.classList.add('is-open');
+    }
+    function closeImpr() {
+      if (overlay) overlay.classList.remove('is-open');
+    }
+
+    var btn1 = document.getElementById('impr-open-btn');
+    var btn2 = document.getElementById('impr-open-btn-2');
+    if (btn1) btn1.addEventListener('click', openImpr);
+    if (btn2) btn2.addEventListener('click', openImpr);
+    if (closeBtn) closeBtn.addEventListener('click', closeImpr);
+
+    /* Klick auf Overlay-Hintergrund schließt */
+    if (overlay) {
+      overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) closeImpr();
+      });
+    }
+
+    /* Escape schließt */
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeImpr();
     });
-    
-    // Mobile: Menü schließen beim Klick auf Link
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            if (navMenu.classList.contains('active')) {
-                navMenu.classList.remove('active');
-                navToggle.setAttribute('aria-expanded', 'false');
-            }
+  }
+
+
+  /* ============================================================
+     3. FAQ-AKKORDEON
+     ============================================================ */
+
+  /**
+   * Initialisiert alle FAQ-Akkordeons auf der Seite.
+   * Funktioniert für beliebig viele .faq__item Elemente.
+   */
+  function initFaq() {
+    var items = document.querySelectorAll('.faq__item');
+    if (!items.length) return;
+
+    items.forEach(function (item) {
+      var trigger = item.querySelector('.faq__trigger');
+      if (!trigger) return;
+
+      trigger.addEventListener('click', function () {
+        var isOpen = item.classList.contains('faq__item--open');
+
+        /* Alle anderen schließen (Akkordeon-Verhalten) */
+        items.forEach(function (other) {
+          other.classList.remove('faq__item--open');
+          var t = other.querySelector('.faq__trigger');
+          if (t) t.setAttribute('aria-expanded', 'false');
         });
-    });
-}
 
-// ========================================
-// COOKIE BANNER
-// ========================================
-function initializeCookieBanner() {
-    const cookieModal = document.getElementById('cookie-modal');
-    if (!cookieModal) return;
-    
-    // Überprüfe ob Cookie-Entscheidung bereits getroffen wurde
-    if (!localStorage.getItem('cookie-consent')) {
-        setTimeout(() => {
-            cookieModal.style.display = 'flex';
-            console.log('🍪 Cookie Banner angezeigt');
-        }, 1000);
-    } else {
-        console.log('✅ Cookie Consent bereits vorhanden');
-    }
-    
-    // Save Settings Button
-    const saveBtn = document.getElementById('cookie-save-settings');
-    if (saveBtn) {
-        saveBtn.addEventListener('click', function() {
-            const analyticsCookie = document.getElementById('cookie-toggle-analytics')?.checked || false;
-            const marketingCookie = document.getElementById('cookie-toggle-marketing')?.checked || false;
-            
-            localStorage.setItem('cookie-consent', JSON.stringify({
-                analytics: analyticsCookie,
-                marketing: marketingCookie,
-                timestamp: new Date().getTime()
-            }));
-            
-            cookieModal.style.display = 'none';
-            console.log('✅ Cookie Einstellungen gespeichert', {
-                analytics: analyticsCookie,
-                marketing: marketingCookie
-            });
-        });
-    }
-    
-    // Decline Button
-    const declineBtn = document.getElementById('cookie-modal-close');
-    if (declineBtn) {
-        declineBtn.addEventListener('click', function() {
-            localStorage.setItem('cookie-consent', JSON.stringify({
-                analytics: false,
-                marketing: false,
-                timestamp: new Date().getTime()
-            }));
-            cookieModal.style.display = 'none';
-            console.log('❌ Cookies abgelehnt');
-        });
-    }
-}
-
-// ========================================
-// LIGHTBOX GALLERY
-// ========================================
-window.openLightbox = function(src, alt) {
-    var lightbox = document.getElementById('myLightbox');
-    var img = document.getElementById('lightboxImg');
-    if (lightbox && img) {
-        img.src = src;
-        img.alt = alt;
-        lightbox.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-        console.log('🖼️ Lightbox geöffnet:', alt);
-    }
-}
-
-window.closeLightbox = function() {
-    var lightbox = document.getElementById('myLightbox');
-    if (lightbox) {
-        lightbox.style.display = 'none';
-        document.body.style.overflow = 'auto';
-        console.log('🖼️ Lightbox geschlossen');
-    }
-}
-
-// ESC zum Schließen des Lightbox
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        window.closeLightbox();
-    }
-});
-
-// ========================================
-// UTILITY: SMOOTH SCROLL
-// ========================================
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+        /* Geklicktes Item toggeln */
+        if (!isOpen) {
+          item.classList.add('faq__item--open');
+          trigger.setAttribute('aria-expanded', 'true');
         }
+      });
     });
-});
+  }
 
-// ========================================
-// CONSOLE LOGGING
-// ========================================
-console.log('%c🚀 Hoiß Stickerei Website geladen', 'color: #ef8006; font-size: 16px; font-weight: bold;');
+
+  /* ============================================================
+     4. EINSTIEGSPUNKT
+     ============================================================ */
+
+  /**
+   * Wartet auf DOMContentLoaded und initialisiert Header, Footer & FAQ.
+   *
+   * Bei statisch eingebettetem Header/Footer (z.B. PHP include):
+   *   → alles läuft automatisch.
+   *
+   * Bei dynamisch nachgeladenem Header/Footer (fetch + innerHTML):
+   *   → nach dem Einfügen ins DOM manuell aufrufen:
+   *       window.initHeader();
+   *       window.initFooter();
+   */
+  function init() {
+    initHeader();
+    initFooter();
+    initFaq();
+  }
+
+  /* Public API – erreichbar für dynamisches Nachladen */
+  window.initHeader = initHeader;
+  window.initFooter = initFooter;
+  window.initFaq    = initFaq;
+
+  /* Automatischer Start */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+}());
