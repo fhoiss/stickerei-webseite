@@ -1706,16 +1706,29 @@ strong, b {
   background: #fff;
   border-bottom: 1px solid #efefef;
   box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  transition: box-shadow 0.25s;
 }
+
+/* Beim Scrollen: etwas stärkerer Schatten */
+.hs-header.is-scrolled {
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+}
+
 .hs-header__inner {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1.5rem;
-  height: 68px;
+  height: 88px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  transition: height 0.25s;
+}
+
+/* Beim Scrollen: Header auf kompakte Höhe schrumpfen */
+.hs-header.is-scrolled .hs-header__inner {
+  height: 64px;
 }
 
 /* ── Logo ───────────────────────────────────────── */
@@ -1726,9 +1739,15 @@ strong, b {
   flex-shrink: 0;
 }
 .hs-logo__img {
-  height: 42px;
+  height: 58px;
   width: auto;
   display: block;
+  transition: height 0.25s;
+}
+
+/* Logo schrumpft mit Header mit */
+.hs-header.is-scrolled .hs-logo__img {
+  height: 40px;
 }
 .hs-logo__text {
   display: none;

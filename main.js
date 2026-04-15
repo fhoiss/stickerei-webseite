@@ -96,6 +96,20 @@
         link.classList.add('hs-nav__link--active');
       }
     });
+
+    /* ── Scroll: Header schrumpfen ── */
+    var header = document.getElementById('hs-header');
+    if (header) {
+      function onScroll() {
+        if (window.scrollY > 10) {
+          header.classList.add('is-scrolled');
+        } else {
+          header.classList.remove('is-scrolled');
+        }
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); /* Initialzustand setzen */
+    }
   }
 
 
