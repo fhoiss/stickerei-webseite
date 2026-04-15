@@ -141,13 +141,15 @@
       if (overlay) overlay.classList.remove('is-open');
     }
 
-    var btn1 = document.getElementById('impr-open-btn');
-    var btn2 = document.getElementById('impr-open-btn-2');
-    if (btn1) btn1.addEventListener('click', openImpr);
-    if (btn2) btn2.addEventListener('click', openImpr);
+    /* Alle drei möglichen Auslöser registrieren */
+    ['impr-open-btn', 'impr-open-btn-col', 'impr-open-btn-2'].forEach(function (id) {
+      var btn = document.getElementById(id);
+      if (btn) btn.addEventListener('click', openImpr);
+    });
+
     if (closeBtn) closeBtn.addEventListener('click', closeImpr);
 
-    /* Klick auf Overlay-Hintergrund schließt */
+    /* Klick auf Hintergrund schließt */
     if (overlay) {
       overlay.addEventListener('click', function (e) {
         if (e.target === overlay) closeImpr();
@@ -158,6 +160,14 @@
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') closeImpr();
     });
+
+    /* ── Cookie-Einstellungen erneut öffnen ── */
+    var reopenBtn = document.getElementById('hs-cookie-reopen-btn');
+    if (reopenBtn) {
+      reopenBtn.addEventListener('click', function () {
+        if (typeof window.reopenCookieBanner === 'function') window.reopenCookieBanner();
+      });
+    }
   }
 
 
@@ -198,7 +208,149 @@
 
 
   /* ============================================================
-     4. EINSTIEGSPUNKT
+     4. COOKIE-BANNER
+     ============================================================ */
+
+  /**
+   * Initialisiert den Cookie-Banner.
+   * Aufrufen nachdem cookie-banner.html ins DOM eingefügt wurde.
+   *
+   * Gespeicherte Einwilligungen (localStorage):
+   *   hs_consent_status  – 'accepted' | 'rejected' | 'custom'
+   *   hs_consent_maps    – 'true' | 'false'
+   */
+  function initCookieBanner() {
+
+    /* ── Elemente ── */
+    var banner        = document.getElementById('hs-cookie-banner');
+    var overlay       = document.getElementById('hs-cookie-overlay');
+    var catMaps       = document.getElementById('hs-cat-maps');
+
+    var btnAcceptAll  = document.getElementById('hs-cb-accept-all');
+    var btnRejectAll  = document.getElementById('hs-cb-reject-all');
+    var btnSettings   = document.getElementById('hs-cb-open-settings');
+    var btnModalClose = document.getElementById('hs-cookie-modal-close');
+    var btnModalSave  = document.getElementById('hs-modal-save');
+    var btnModalReject= document.getElementById('hs-modal-reject-all');
+
+    if (!banner) return;
+
+    /* ── Einwilligung lesen / schreiben ── */
+    function getConsent()    { return localStorage.getItem('hs_consent_status'); }
+    function getMapsConsent(){ return localStorage.getItem('hs_consent_maps') === 'true'; }
+
+    function saveConsent(status, maps) {
+      localStorage.setItem('hs_consent_status', status);
+      localStorage.setItem('hs_consent_maps',   String(maps));
+      hideBanner();
+      closeModal();
+      applyConsent(maps);
+    }
+
+    /* ── Banner anzeigen / verstecken ── */
+    function showBanner() { if (banner) banner.classList.add('is-visible'); }
+    function hideBanner() { if (banner) banner.classList.remove('is-visible'); }
+
+    /* ── Modal öffnen / schließen ── */
+    function openModal() {
+      if (!overlay) return;
+      /* Aktuellen Stand in Toggles spiegeln */
+      if (catMaps) catMaps.checked = getMapsConsent();
+      overlay.classList.add('is-open');
+    }
+    function closeModal() {
+      if (overlay) overlay.classList.remove('is-open');
+    }
+
+    /* ── Einwilligung anwenden ── */
+    function applyConsent(maps) {
+      /* Globales Event auslösen – Google Maps kann darauf lauschen */
+      var event = new CustomEvent('hs:consent', { detail: { maps: maps } });
+      document.dispatchEvent(event);
+    }
+
+    /* ── Initialisierung ── */
+    var status = getConsent();
+    if (!status) {
+      /* Noch keine Entscheidung → Banner zeigen */
+      showBanner();
+    } else {
+      /* Bereits entschieden → direkt anwenden */
+      applyConsent(getMapsConsent());
+    }
+
+    /* ── Event-Listener: Banner ── */
+    if (btnAcceptAll) {
+      btnAcceptAll.addEventListener('click', function () {
+        saveConsent('accepted', true);
+      });
+    }
+    if (btnRejectAll) {
+      btnRejectAll.addEventListener('click', function () {
+        saveConsent('rejected', false);
+      });
+    }
+    if (btnSettings) {
+      btnSettings.addEventListener('click', function () {
+        hideBanner();
+        openModal();
+      });
+    }
+
+    /* ── Event-Listener: Modal ── */
+    if (btnModalClose) {
+      btnModalClose.addEventListener('click', function () {
+        closeModal();
+        /* Banner wieder zeigen wenn noch keine Entscheidung */
+        if (!getConsent()) showBanner();
+      });
+    }
+    if (btnModalSave) {
+      btnModalSave.addEventListener('click', function () {
+        var maps = catMaps ? catMaps.checked : false;
+        saveConsent('custom', maps);
+      });
+    }
+    if (btnModalReject) {
+      btnModalReject.addEventListener('click', function () {
+        if (catMaps) catMaps.checked = false;
+        saveConsent('rejected', false);
+      });
+    }
+
+    /* Klick auf Overlay-Hintergrund schließt Modal */
+    if (overlay) {
+      overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) {
+          closeModal();
+          if (!getConsent()) showBanner();
+        }
+      });
+    }
+
+    /* Escape schließt Modal */
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && overlay && overlay.classList.contains('is-open')) {
+        closeModal();
+        if (!getConsent()) showBanner();
+      }
+    });
+  }
+
+  /**
+   * Cookie-Banner erneut öffnen (z.B. via Footer-Link).
+   * Löscht die gespeicherte Entscheidung und zeigt den Banner wieder.
+   */
+  function reopenCookieBanner() {
+    localStorage.removeItem('hs_consent_status');
+    localStorage.removeItem('hs_consent_maps');
+    var banner = document.getElementById('hs-cookie-banner');
+    if (banner) banner.classList.add('is-visible');
+  }
+
+
+  /* ============================================================
+     5. EINSTIEGSPUNKT
      ============================================================ */
 
   /**
@@ -218,10 +370,12 @@
     initFaq();
   }
 
-  /* Public API – erreichbar für dynamisches Nachladen */
-  window.initHeader = initHeader;
-  window.initFooter = initFooter;
-  window.initFaq    = initFaq;
+  /* Public API */
+  window.initHeader        = initHeader;
+  window.initFooter        = initFooter;
+  window.initFaq           = initFaq;
+  window.initCookieBanner  = initCookieBanner;
+  window.reopenCookieBanner= reopenCookieBanner;
 
   /* Automatischer Start */
   if (document.readyState === 'loading') {

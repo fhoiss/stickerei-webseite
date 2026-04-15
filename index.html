@@ -6,10 +6,7 @@
   <meta name="description" content="Hoiß Stickerei & Textildruck – Ihr textiler Werbepartner seit 2004. Stickerei, DTF-Transferdruck, Flexdruck und Flockdruck im Raum Rosenheim.">
   <title>Hoiß Stickerei & Textildruck – Rosenheim</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+  <link rel="stylesheet" href="fonts.css">
   <link rel="stylesheet" href="hoiss-stickerei.css">
 </head>
 
@@ -451,6 +448,9 @@
   <!-- Footer (dynamisch) -->
   <div id="site-footer-placeholder"></div>
 
+  <!-- Cookie-Banner (dynamisch) -->
+  <div id="hs-cookie-placeholder"></div>
+
   <script src="main.js" defer></script>
   <script>
     /*
@@ -477,6 +477,9 @@
       });
       loadFragment('footer.html', 'site-footer-placeholder', function () {
         if (typeof window.initFooter === 'function') window.initFooter();
+      });
+      loadFragment('cookie-banner.html', 'hs-cookie-placeholder', function () {
+        if (typeof window.initCookieBanner === 'function') window.initCookieBanner();
       });
     });
   </script>

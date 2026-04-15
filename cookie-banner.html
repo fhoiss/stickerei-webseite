@@ -1,0 +1,84 @@
+<!--
+  cookie-banner.html – Hoiß Stickerei & Textildruck
+  Einbinden via:
+    fetch('cookie-banner.html').then(r => r.text()).then(html => {
+      document.getElementById('hs-cookie-placeholder').innerHTML = html;
+      window.initCookieBanner();
+    });
+  Alle Styles → hoiss-stickerei.css (Sektion 27)
+  Alle Scripts → main.js (initCookieBanner)
+-->
+
+<!-- ░░ BANNER – Erstes Layer ░░ -->
+<div class="hs-cookie-banner" id="hs-cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie-Einstellungen">
+
+  <div class="hs-cookie-banner__icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"/>
+      <path d="M8.5 8.5v.01"/><path d="M16 15.5v.01"/><path d="M12 12v.01"/>
+    </svg>
+  </div>
+
+  <p class="hs-cookie-banner__title">Wir verwenden Cookies</p>
+  <p class="hs-cookie-banner__text">
+    Diese Website verwendet technisch notwendige Cookies sowie – mit Ihrer Einwilligung – optionale Dienste wie Google Maps.
+    Weitere Informationen finden Sie in unserer <a href="/datenschutzerklaerung/">Datenschutzerklärung</a>.
+  </p>
+
+  <div class="hs-cookie-banner__actions">
+    <button class="hs-cb-btn hs-cb-btn--accept" id="hs-cb-accept-all">Alle akzeptieren</button>
+    <button class="hs-cb-btn hs-cb-btn--reject" id="hs-cb-reject-all">Ablehnen</button>
+    <button class="hs-cb-btn hs-cb-btn--settings" id="hs-cb-open-settings">Einstellungen</button>
+  </div>
+
+</div>
+
+
+<!-- ░░ EINSTELLUNGS-MODAL – Zweites Layer ░░ -->
+<div class="hs-cookie-overlay" id="hs-cookie-overlay" role="dialog" aria-modal="true" aria-label="Cookie-Einstellungen">
+  <div class="hs-cookie-modal" id="hs-cookie-modal">
+
+    <button class="hs-cookie-modal__close" id="hs-cookie-modal-close" aria-label="Schließen">&#x2715;</button>
+
+    <p class="hs-cookie-modal__title">Cookie-Einstellungen</p>
+    <p class="hs-cookie-modal__sub">Wählen Sie, welche Cookies Sie zulassen möchten.</p>
+
+    <!-- Kategorie 1: Notwendig (immer aktiv) -->
+    <div class="hs-cookie-cat">
+      <div class="hs-cookie-cat__header">
+        <span class="hs-cookie-cat__name">Technisch notwendig</span>
+        <label class="hs-toggle" title="Immer aktiv">
+          <input type="checkbox" id="hs-cat-necessary" checked disabled>
+          <span class="hs-toggle__track"></span>
+        </label>
+      </div>
+      <p class="hs-cookie-cat__desc">
+        Diese Cookies sind für den Betrieb der Website erforderlich und können nicht deaktiviert werden.
+        Sie speichern z.B. Ihre Cookie-Präferenzen.<br>
+        <span class="hs-cookie-required">Immer aktiv</span>
+      </p>
+    </div>
+
+    <!-- Kategorie 2: Google Maps -->
+    <div class="hs-cookie-cat">
+      <div class="hs-cookie-cat__header">
+        <span class="hs-cookie-cat__name">Google Maps</span>
+        <label class="hs-toggle" title="Google Maps aktivieren">
+          <input type="checkbox" id="hs-cat-maps">
+          <span class="hs-toggle__track"></span>
+        </label>
+      </div>
+      <p class="hs-cookie-cat__desc">
+        Ermöglicht die Anzeige interaktiver Karten. Bei Aktivierung werden Daten (inkl. IP-Adresse) an Google Ireland Limited übertragen.
+        Anbieter: Google Ireland Limited, Gordon House, Dublin 4, Irland.
+        Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO.
+      </p>
+    </div>
+
+    <div class="hs-cookie-modal__actions">
+      <button class="hs-cb-btn hs-cb-btn--reject" id="hs-modal-reject-all">Alle ablehnen</button>
+      <button class="hs-cb-btn hs-cb-btn--accept" id="hs-modal-save">Auswahl speichern</button>
+    </div>
+
+  </div>
+</div>
